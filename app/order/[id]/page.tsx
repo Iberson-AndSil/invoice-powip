@@ -29,7 +29,7 @@ export default function InvoicePage() {
     const formattedTime = time.split(".")[0];
     return (
         <div className="w-full flex items-center justify-center">
-            <div className="w-2/6">
+            <div className="w-full md:w-2/6">
                 <h3 className="text-5xl font-semibold text-center">{order.store}</h3>
                 <h1 className="text-xl bg-[#22596c] text-white text-center w-full py-2 m-2 rounded-md">
                     ORDEN #{order.orderNumber}
@@ -56,6 +56,7 @@ export default function InvoicePage() {
                     <span>Dirección de Entrega: {order.address}</span>
                     <span>No. de Contacto: {order.phone}</span>
                     <span>Fecha: {date} {formattedTime}</span>
+                    {/* <span>Estado: {order.orderStatus}</span> */}
                 </div>
                 <h1 className="text-base bg-[#22928d] text-white text-center w-full py-1 m-2 rounded-md">
                     DETALLES DEL PEDIDO

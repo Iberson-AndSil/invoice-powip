@@ -1,6 +1,21 @@
 const baseUrl = "http://localhost:4000/masterdata";
 const userInvoice = "JROMERO";
 
+
+export interface OrderItemDTO {
+    id: string;
+    productId: string;
+    sku: string;
+    model: string;
+    color: string;
+    size: string;
+    category: string;
+    subCategory: string;
+    quantity: number;
+    unitPrice: number;
+    totalPrice: number;
+}
+  
 export interface Order {
     id: string;
     orderNumber: number;
@@ -93,7 +108,7 @@ const fetchOrder = async (
             discount:data.discount,
             store: data.store ?? "No especificado",
             orderItemDTOS: Array.isArray(data.orderItemDTOS)
-                ? data.orderItemDTOS.map((item: any) => ({
+                ? data.orderItemDTOS.map((item: OrderItemDTO) => ({
                       id: item.id,
                       productId: item.productId,
                       sku: item.sku,
