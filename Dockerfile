@@ -15,5 +15,6 @@ COPY --from=builder /app/package.json ./package.json
 RUN pnpm install --prod
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
+COPY .env .env
 EXPOSE 3000
 CMD ["pnpm", "start"]
