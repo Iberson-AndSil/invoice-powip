@@ -1,7 +1,7 @@
 export default function Home() {
   return (
     <div>
-      <h1>hola mundo</h1>
+      <h1>página principal de powip</h1>
     </div>
   );
 }

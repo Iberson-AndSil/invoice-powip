@@ -1,6 +1,4 @@
-const baseUrl = "http://localhost:4000/masterdata";
-const userInvoice = "JROMERO";
-
+import { baseUrl, userInvoice } from "../../../env";
 
 export interface OrderItemDTO {
     id: string;
@@ -59,7 +57,6 @@ const fetchOrder = async (
     setLoading: React.Dispatch<React.SetStateAction<boolean>>
 ) => {
 
-    console.log("userInvoice",userInvoice);
     
     try {
         setLoading(true);

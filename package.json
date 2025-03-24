@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "dotenv": "^16.4.7",
     "my-next-app": "file:",
     "next": "15.2.2",
     "postcss": "^8.5.3",
