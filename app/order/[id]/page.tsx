@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { Order, fetchOrder } from "./order";
 import { WhatsAppOutlined } from '@ant-design/icons';
-import { Span } from "next/dist/trace";
 
 export default function InvoicePage() {
     const params = useParams();
