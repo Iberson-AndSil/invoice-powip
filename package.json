@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "antd": "^5.24.5",
     "dotenv": "^16.4.7",
     "my-next-app": "file:",
     "next": "15.2.2",

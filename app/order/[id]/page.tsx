@@ -2,6 +2,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { Order, fetchOrder } from "./order";
+import { WhatsAppOutlined } from '@ant-design/icons';
+import { Span } from "next/dist/trace";
 
 export default function InvoicePage() {
     const params = useParams();
@@ -21,6 +23,12 @@ export default function InvoicePage() {
     useEffect(() => {
         if (order) console.log("Pedido cargado:", order);
     }, [order]);
+
+    const formatCurrency = new Intl.NumberFormat("es-PE", {
+        style: "currency",
+        currency: "PEN",
+        minimumFractionDigits: 2,
+      });
 
     if (loading) return <div>cargando orden...</div>;
 
@@ -56,14 +64,13 @@ export default function InvoicePage() {
                     <span>Dirección de Entrega: {order.address}</span>
                     <span>No. de Contacto: {order.phone}</span>
                     <span>Fecha: {date} {formattedTime}</span>
-                    {/* <span>Estado: {order.orderStatus}</span> */}
                 </div>
                 <h1 className="text-base bg-[#22928d] text-white text-center w-full py-1 m-2 rounded-md">
                     DETALLES DEL PEDIDO
                 </h1>
                 {order.orderItemDTOS.length > 0 ? (
                     order.orderItemDTOS.map((item, index) => (
-                        <div key={index} className="flex flex-col px-4 border-[1px] w-full mx-2 rounded-md border-slate-300 py-3">
+                        <div key={index} className="flex flex-col px-4 border-[1px] w-full mx-2 rounded-md border-slate-300 py-3 mb-3">
                             <span className="text-lg text-[#22928d] font-semibold">{item.model} {item.color}</span>
                             <span>Marca: {order.store}</span>
                             <div className="text-sm my-2 text-neutral-500 flex flex-col">
@@ -71,16 +78,40 @@ export default function InvoicePage() {
                                 <span>Talla: {item.size}</span>
                             </div>
                             <span>Cantidad Unds: {item.quantity}</span>
-                            <span>Precio unitario: S/{item.unitPrice}</span>
-                            <span>Sub Total: S/{item.totalPrice}</span>
+                            <span>Precio unitario: {formatCurrency.format(item.unitPrice)}</span>
+                            <span>Descuento:
+                                {item.discount=="MONTO"?(
+                                   <span>{formatCurrency.format(item.discountAmount)}</span>):
+                                item.discount=="PORCENTAJE"?(<span> %/{item.discountAmount}</span>):
+                                item.discount=="NO APLICA"?(<span> Sin descuento</span>):null}
+                            </span>
+                            <span>Sub Total: {formatCurrency.format(item.totalPrice)}</span>
                         </div>
                     ))
                 ) : (
                     <p>No hay productos en esta orden.</p>
                 )}
-
-                <div className="m-4 flex flex-col font-semibold text-xl">
-                <h1>Valor a Pagar {order.saleAmount}</h1>
+                <div className="m-4 flex flex-col font-semibold text-lg">
+                    <h1>Valor a Pagar: {formatCurrency.format(order.saleAmount)}</h1>
+                    <h1>Descuento de Venta: {order.discount == "MONTO" ? (<span>formatCurrency.format(order.discountAmount)</span>) :
+                        order.discount == "PORCENTAJE" ? (<span>%{order.discountAmount}</span>) : 
+                        order.discount == "NO APLICA" ? (<span>Sin Descuento</span>):null}
+                    </h1>
+                    <h1>Total Compras: {formatCurrency.format(order.saleAmount)}</h1>
+                    {order.deliveryAmount == 0 ? (
+                        <h1 className="text-orange-600">Aún no se paga el envío</h1>
+                    ) : (
+                        <h1 className="text-emerald-600">Envío Pagado: {formatCurrency.format(order.deliveryAmount)}</h1>
+                    )
+                    }
+                </div>
+                <div className="w-full flex flex-col justify-center items-center">
+                    <p className="my-2 w-3/4 text-center text-lg">Para hacer seguimiento sobre tu pedido escríbenos al <a href="https://wa.me/51970334874" target="_blank" rel="noopener noreferrer" className="border-b-2 border-[#22928d]">970334874 <WhatsAppOutlined style={{ fontSize: '25px', color: '#22928d' }} /></a>
+                        </p>
+                    <div className="flex flex-col my-3 items-center text-sm justify-center text-center">
+                        <p>Impulsado por:</p>
+                        <img src="/logo.png" alt="png" className="w-27" />
+                    </div>
                 </div>
             </div>
         </div>

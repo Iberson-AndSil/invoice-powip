@@ -12,6 +12,8 @@ export interface OrderItemDTO {
     quantity: number;
     unitPrice: number;
     totalPrice: number;
+    discount:string;
+    discountAmount:number;
 }
   
 export interface Order {
@@ -35,20 +37,9 @@ export interface Order {
     instagram:string;
     registrationDate:string;
     discount:string;
+    discountAmount:number;
     store: string;
-    orderItemDTOS: {
-        id: string;
-        productId: string;
-        sku: string;
-        model: string;
-        color: string;
-        size: string;
-        category: string;
-        subCategory: string;
-        quantity: number;
-        unitPrice: number;
-        totalPrice: number;
-    }[];
+    orderItemDTOS: OrderItemDTO[];
 }
 
 const fetchOrder = async (
@@ -104,6 +95,7 @@ const fetchOrder = async (
             registrationDate:data.registrationDate,
             discount:data.discount,
             store: data.store ?? "No especificado",
+            discountAmount:data.discountAmount,
             orderItemDTOS: Array.isArray(data.orderItemDTOS)
                 ? data.orderItemDTOS.map((item: OrderItemDTO) => ({
                       id: item.id,
@@ -117,6 +109,8 @@ const fetchOrder = async (
                       quantity: item.quantity,
                       unitPrice: item.unitPrice,
                       totalPrice: item.totalPrice,
+                      discount:item.discount,
+                      discountAmount:item.discountAmount
                   }))
                 : [],
         });
