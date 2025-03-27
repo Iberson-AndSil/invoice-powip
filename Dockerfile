@@ -12,7 +12,7 @@ WORKDIR /app
 ENV NODE_ENV=production
 RUN npm install -g pnpm
 COPY --from=builder /app/package.json ./package.json
-RUN pnpm install --prod
+RUN pnpm install --prod && pnpm add @ant-design/icons
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
 COPY env.ts env.ts
