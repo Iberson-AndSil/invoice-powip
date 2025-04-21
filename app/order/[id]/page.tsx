@@ -9,25 +9,34 @@ export default function InvoicePage() {
     const orderId = params?.id as string | undefined;
     const [order, setOrder] = useState<Order | null>(null);
     const [loading, setLoading] = useState(true);
+    const [discountOrder, setDiscountOrder] = useState<number|undefined>(0);
 
     useEffect(() => {
         if (!orderId) {
             setLoading(false);
             return;
         }
-
         fetchOrder(orderId, setOrder, setLoading);
     }, [orderId]);
 
     useEffect(() => {
-        if (order) console.log("Pedido cargado:", order);
-    }, [order]);
+        const itemDiscountTotal = order?.orderItemDTOS.reduce((sum, item) => {
+            if (item.discount.toLowerCase() === "porcentaje") {
+                const discountAsAmount = (item.discountAmount / 100) * item.totalPrice;
+                return sum + discountAsAmount;
+            } else if (item.discount.toLowerCase() === "monto") {
+                return sum + item.discountAmount;
+            }
+            return sum;
+        }, 0);
+        setDiscountOrder(itemDiscountTotal);
+    }, [order,discountOrder]);
 
     const formatCurrency = new Intl.NumberFormat("es-PE", {
         style: "currency",
         currency: "PEN",
         minimumFractionDigits: 2,
-      });
+    });
 
     if (loading) return <div>cargando orden...</div>;
 
@@ -79,10 +88,10 @@ export default function InvoicePage() {
                             <span>Cantidad Unds: {item.quantity}</span>
                             <span>Precio unitario: {formatCurrency.format(item.unitPrice)}</span>
                             <span>Descuento:
-                                {item.discount=="MONTO"?(
-                                   <span>{formatCurrency.format(item.discountAmount)}</span>):
-                                item.discount=="PORCENTAJE"?(<span> %/{item.discountAmount}</span>):
-                                item.discount=="NO APLICA"?(<span> Sin descuento</span>):null}
+                                {item.discount == "MONTO" ? (
+                                    <span>{formatCurrency.format(item.discountAmount)}</span>) :
+                                    item.discount == "PORCENTAJE" ? (<span> %/{item.discountAmount}</span>) :
+                                        item.discount == "NO APLICA" ? (<span> Sin descuento</span>) : null}
                             </span>
                             <span>Sub Total: {formatCurrency.format(item.totalPrice)}</span>
                         </div>
@@ -92,9 +101,8 @@ export default function InvoicePage() {
                 )}
                 <div className="m-4 flex flex-col font-semibold text-lg">
                     <h1>Valor a Pagar: {formatCurrency.format(order.saleAmount)}</h1>
-                    <h1>Descuento de Venta: {order.discount == "MONTO" ? (<span>formatCurrency.format(order.discountAmount)</span>) :
-                        order.discount == "PORCENTAJE" ? (<span>%{order.discountAmount}</span>) : 
-                        order.discount == "NO APLICA" ? (<span>Sin Descuento</span>):null}
+                    <h1>Descuento de Venta:
+                        {discountOrder! > 0 ? <span> {formatCurrency.format(discountOrder!)}</span> : <span>Sin descuento</span>}
                     </h1>
                     <h1>Total Compras: {formatCurrency.format(order.saleAmount)}</h1>
                     {order.deliveryAmount == 0 ? (
@@ -106,7 +114,7 @@ export default function InvoicePage() {
                 </div>
                 <div className="w-full flex flex-col justify-center items-center">
                     <p className="my-2 w-3/4 text-center text-lg">Para hacer seguimiento sobre tu pedido escríbenos al <a href="https://wa.me/51970334874" target="_blank" rel="noopener noreferrer" className="border-b-2 border-[#22928d]">970334874 <WhatsAppOutlined style={{ fontSize: '25px', color: '#22928d' }} /></a>
-                        </p>
+                    </p>
                     <div className="flex flex-col my-3 items-center text-sm justify-center text-center">
                         <p>Impulsado por:</p>
                         <img src="/logo.png" alt="png" className="w-27" />
